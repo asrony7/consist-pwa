@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101114">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Consist — Creator Studio</title>
+<style>
+:root{--bg:#101114;--panel:#191b21;--panel2:#22252d;--text:#f4f4f6;--muted:#a6a9b4;--accent:#b8f36b;--line:#30333c;--danger:#ff8d8d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{max-width:760px;margin:auto;min-height:100vh;padding-bottom:90px}.top{padding:22px 18px 14px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:24px;font-weight:850;letter-spacing:-1px}.brand span{color:var(--accent)}.tag{color:var(--muted);font-size:12px}.pill{background:#28331e;color:var(--accent);border:1px solid #3d512b;border-radius:99px;padding:7px 10px;font-size:12px}
+main{padding:0 16px}.page{display:none}.page.active{display:block}.hero{padding:20px;border-radius:22px;background:linear-gradient(135deg,#293622,#1b2119 65%,#20232a);border:1px solid #39452e;margin-bottom:14px}.eyebrow{font-size:11px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:1.4px}.hero h1{font-size:29px;line-height:1.1;margin:8px 0}.hero p{color:#d0d5c9;margin:0 0 16px}.btn{background:var(--accent);color:#171b12;border:0;border-radius:12px;padding:11px 14px;font-weight:800}.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.btn.small{padding:8px 10px;font-size:12px}.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px;margin-bottom:11px;min-width:0}.metric{font-size:26px;font-weight:850;margin:7px 0 1px}.muted{color:var(--muted)}.section-title{font-size:18px;font-weight:800;margin:20px 2px 10px}.field{width:100%;background:#111318;border:1px solid var(--line);color:var(--text);border-radius:11px;padding:12px;margin:6px 0 12px;outline:none}.field:focus{border-color:var(--accent)}label{display:block;color:var(--muted);font-size:12px;font-weight:700}.actions{display:flex;gap:8px;flex-wrap:wrap}.scriptout{white-space:pre-wrap;background:#111318;border:1px solid var(--line);border-radius:13px;padding:13px;min-height:90px;color:#e8e9ec}.nav{position:fixed;bottom:0;left:0;right:0;background:#15161bfa;border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 5px calc(8px + env(safe-area-inset-bottom));z-index:5;backdrop-filter:blur(14px)}.navinner{display:flex;max-width:760px;width:100%;justify-content:space-around}.nav button{background:none;border:0;color:var(--muted);font-size:11px;padding:6px 8px;min-width:58px}.nav button b{display:block;font-size:19px;font-weight:500;margin-bottom:2px}.nav button.active{color:var(--accent)}.post{padding:12px 0;border-bottom:1px solid var(--line)}.post:last-child{border:0}.status{font-size:11px;border-radius:99px;padding:4px 8px;background:#292c34;color:#d4d5da}.status.published{background:#28331e;color:var(--accent)}.calhead{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:11px;color:var(--muted);margin-bottom:5px}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.day{border:1px solid var(--line);background:#14161b;color:var(--text);border-radius:9px;min-height:47px;padding:5px 0;font-size:12px}.day.today{border-color:var(--accent)}.day.has{background:#29351f}.day .dot{color:var(--accent);font-size:10px}.preview{background:#08090b;border:1px solid var(--line);border-radius:18px;aspect-ratio:9/16;max-height:360px;margin:10px auto;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;width:min(100%,220px)}.preview video{width:100%;height:100%;object-fit:contain}.overlay{position:absolute;left:8px;right:8px;bottom:25px;text-align:center;font-weight:900;font-size:21px;text-shadow:0 2px 7px #000,0 0 3px #000;overflow-wrap:anywhere}.empty{color:var(--muted);text-align:center;padding:20px 5px}.foot{font-size:11px;color:var(--muted);text-align:center;padding:16px}.checkrow{display:flex;align-items:center;gap:8px}.checkrow input{accent-color:var(--accent)}.notice{font-size:12px;color:var(--muted);margin-top:8px}.hidden{display:none!important}
+@media(min-width:600px){main{padding:0 22px}.top{padding-left:22px;padding-right:22px}.hero h1{font-size:34px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div><div class="brand">consist<span>.</span></div><div class="tag">YOUR PERSONAL CREATOR STUDIO</div></div><div class="pill">BETA · LOCAL</div></header>
+<main>
+<section class="page active" id="home">
+<div class="hero"><div class="eyebrow">Small steps. Real momentum.</div><h1>Make consistency<br>your superpower.</h1><p>Plan your next reel, show up today, and keep your streak alive.</p><button class="btn" onclick="showPage('scripts')">＋ Create a reel idea</button></div>
+<div class="grid">
+<div class="card"><div class="muted">Current streak 🔥</div><div class="metric" id="streakMetric">0 days</div><div class="muted" style="font-size:12px">Publish at least once a day</div></div>
+<div class="card"><div class="muted">Published this week</div><div class="metric" id="weekMetric">0/3</div><div class="muted" style="font-size:12px">Your weekly goal</div></div>
+</div>
+<div class="section-title">Today's focus</div><div class="card" id="todayFocus"></div>
+<div class="section-title">Quick actions</div><div class="grid">
+<button class="card" onclick="showPage('calendar')" style="text-align:left;color:var(--text)"><div style="font-size:22px">🗓️</div><b>Plan content</b><div class="muted">Build your calendar</div></button>
+<button class="card" onclick="showPage('editor')" style="text-align:left;color:var(--text)"><div style="font-size:22px">🎬</div><b>Preview a reel</b><div class="muted">Choose a video clip</div></button>
+</div>
+</section>
+<section class="page" id="scripts">
+<div class="section-title" style="margin-top:8px">AI Script Studio</div><p class="muted">Create a first-draft script with the built-in idea generator. This starter works offline; it does not call a live AI model yet.</p>
+<div class="card">
+<label for="niche">Your niche</label><select id="niche" class="field"><option>Daily life / lifestyle</option><option>Medical student life</option><option>Photography / videography</option><option>Gaming</option><option>Food / travel</option><option>Education</option><option>Fitness</option></select>
+<label for="language">Language</label><select id="language" class="field"><option value="English">English</option><option value="Bangla">Bangla</option><option value="Banglish">Banglish</option></select>
+<label for="topic">Topic or idea</label><input id="topic" class="field" placeholder="e.g. a day in my life as a student">
+<label for="duration">Video length</label><select id="duration" class="field"><option>15 seconds</option><option selected>30 seconds</option><option>45 seconds</option><option>60 seconds</option></select>
+<div class="actions"><button class="btn" onclick="generateScript()">Generate script</button><button class="btn secondary" onclick="randomTopic()">Surprise me</button></div>
+</div>
+<div class="section-title">Your draft</div><div class="scriptout" id="scriptOutput">Your hook, scene plan, caption and call to action will appear here.</div>
+<div class="actions" style="margin:10px 0"><button class="btn secondary" onclick="copyScript()">Copy draft</button><button class="btn secondary" onclick="saveDraft()">Save to calendar</button></div>
+<div class="notice">For true AI-generated scripts, connect an API through a secure backend later. Never put a private API key in public front-end code.</div>
+</section>
+<section class="page" id="calendar">
+<div class="section-title" style="margin-top:8px">Content calendar</div>
+<div class="card"><div class="row between"><button class="btn secondary small" onclick="shiftMonth(-1)">←</button><b id="monthLabel"></b><button class="btn secondary small" onclick="shiftMonth(1)">→</button></div><div class="calhead" style="margin-top:14px"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div><div class="calendar" id="calendarGrid"></div><div class="notice">Tap a day to plan a post. Green days have scheduled content.</div></div>
+<div class="card"><div class="section-title" style="margin:0 0 10px" id="selectedDateLabel">Add a post</div><label for="postTitle">Post idea</label><input id="postTitle" class="field" placeholder="e.g. 3 things I learned this week"><label for="postType">Content type</label><select id="postType" class="field"><option>Reel</option><option>Story</option><option>Carousel</option><option>Photo</option><option>Short video</option></select><div class="actions"><button class="btn" onclick="addPost()">Save post</button><button class="btn secondary" onclick="markSelectedPublished()">Mark published</button></div></div>
+<div class="section-title">Planned posts</div><div class="card" id="postList"></div>
+</section>
+<section class="page" id="streaks">
+<div class="section-title" style="margin-top:8px">Consistency tracker</div>
+<div class="hero"><div class="eyebrow">Your momentum</div><h1 id="streakBig">0 day streak 🔥</h1><p>Consistency beats perfection. Publish something meaningful and mark it done.</p><button class="btn" onclick="publishToday()">Mark today published</button></div>
+<div class="grid"><div class="card"><div class="muted">Total published</div><div class="metric" id="totalPublished">0</div></div><div class="card"><div class="muted">Best streak</div><div class="metric" id="bestStreak">0 days</div></div></div>
+<div class="section-title">Last 14 days</div><div class="card" id="history"></div><div class="notice">Streaks use the dates on this device. Posting records stay local to this browser unless you export or sync them.</div>
+</section>
+<section class="page" id="editor">
+<div class="section-title" style="margin-top:8px">Reel preview studio</div><p class="muted">Choose a clip and preview a text overlay. This first version does not render or export edited video yet.</p>
+<div class="card"><label for="videoFile">Choose a video from your phone</label><input id="videoFile" class="field" type="file" accept="video/*"><label for="overlayText">Text overlay</label><textarea id="overlayText" class="field" rows="2" placeholder="Your hook goes here..."></textarea><label for="overlaySize">Overlay size</label><input id="overlaySize" class="field" type="range" min="14" max="34" value="21"><div class="preview" id="videoPreview"><div class="muted" id="previewHint" style="text-align:center;padding:20px">Your vertical video preview appears here</div><div class="overlay" id="overlayLive"></div></div><div class="actions"><button class="btn secondary" onclick="clearVideo()">Clear clip</button><button class="btn secondary" onclick="downloadDraft()">Export script text</button></div><div class="notice">A future editor phase will add trimming, audio, effects and actual MP4 export.</div></div>
+</section>
+<section class="page" id="settings">
+<div class="section-title" style="margin-top:8px">Settings & data</div><div class="card"><b>Your workspace</b><p class="muted">This prototype saves your posts and published dates in your current browser on this device.</p><button class="btn secondary" onclick="exportData()">Export backup (JSON)</button><p class="notice">Keep a backup before clearing browser data. This is a prototype, not a cloud-synced account.</p></div><div class="card"><b>Reset workspace</b><p class="muted">Permanently clears this app's saved posts and streak history from this browser.</p><button class="btn secondary" onclick="resetData()" style="color:var(--danger)">Reset all data</button></div><div class="foot">Consist prototype · Inspired by creator consistency tools, with original branding and UI.</div>
+</section>
+</main>
+<nav class="nav"><div class="navinner">
+<button class="active" data-page="home" onclick="showPage('home')"><b>⌂</b>Home</button>
+<button data-page="scripts" onclick="showPage('scripts')"><b>✦</b>Scripts</button>
+<button data-page="calendar" onclick="showPage('calendar')"><b>▦</b>Calendar</button>
+<button data-page="streaks" onclick="showPage('streaks')"><b>🔥</b>Streaks</button>
+<button data-page="editor" onclick="showPage('editor')"><b>▶</b>Editor</button>
+<button data-page="settings" onclick="showPage('settings')"><b>⚙</b>Settings</button>
+</div></nav>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const shiftKey=(key,n)=>{const d=new Date(key+'T12:00:00');d.setDate(d.getDate()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const niceDate=key=>new Date(key+'T12:00:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+let data={posts:[],published:[],drafts:[]}, selectedDate=todayKey(), monthDate=new Date();
+try{const saved=localStorage.getItem('consist_v1');if(saved)data={...data,...JSON.parse(saved)}}catch(e){}
+function persist(){try{localStorage.setItem('consist_v1',JSON.stringify(data))}catch(e){alert('Could not save. Export a backup or free some browser storage.')};renderAll()}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='calendar')renderCalendar();window.scrollTo({top:0,behavior:'smooth'})}
+function generateScript(){
+ const niche=$('niche').value,lang=$('language').value,topic=$('topic').value.trim()||'a useful lesson from my day',duration=$('duration').value;
+ let script;
+ if(lang==='Bangla') script=`হুক (প্রথম ৩ সেকেন্ড): “${topic} নিয়ে একটা কথা না জানলেই নয়!”\n\nদৃশ্য ১ — হুক: ক্যামেরার দিকে তাকিয়ে কৌতূহল তৈরি করুন।\nদৃশ্য ২ — মূল কথা: ${topic} নিয়ে আপনার ২–৩টি বাস্তব পয়েন্ট বলুন।\nদৃশ্য ৩ — উদাহরণ: নিজের অভিজ্ঞতা বা ছোট একটি demonstration দেখান।\nদৃশ্য ৪ — শেষ: “এটা কাজে লাগলে সেভ করে রাখুন, আর আপনার মতামত কমেন্ট করুন।”\n\nক্যাপশন: ${topic} নিয়ে আপনার অভিজ্ঞতা কী?\nCTA: কমেন্টে জানান।\n\nনোট: এটি একটি টেমপ্লেট-ভিত্তিক খসড়া; নিজের সত্যিকারের অভিজ্ঞতা দিয়ে সম্পাদনা করুন।`;
+ else if(lang==='Banglish') script=`HOOK (0–3s): “${topic} niye ekta jinis jano?”\n\nSCENE 1 — Hook: Camera-r dike takiye curiosity create koro.\nSCENE 2 — Value: ${topic} niye 2–3 ta useful point bolo.\nSCENE 3 — Example: Nijer experience ba quick demo dekhao.\nSCENE 4 — CTA: “Useful lagle save koro, ar tomar opinion comment koro.”\n\nCAPTION: ${topic} niye tomar experience ki?\nCTA: Comment below.\n\nNote: Eta template-based draft; nijer real experience diye edit koro.`;
+ else script=`HOOK (0–3s): “Here's something I wish I knew about ${topic}.”\n\nSCENE 1 — Hook: Start with a close-up or an intriguing visual.\nSCENE 2 — Value: Share 2–3 clear, practical points about ${topic}.\nSCENE 3 — Proof: Show a real example, process, or behind-the-scenes clip.\nSCENE 4 — Payoff: Summarize the one thing viewers should remember.\nSCENE 5 — CTA: “Save this for later and tell me your experience in the comments.”\n\nCAPTION: One small lesson about ${topic} worth sharing.\n\nHASHTAGS: #${niche.split('/')[0].trim().replace(/\W/g,'')} #ContentCreator #Reels\n\nFORMAT: ${duration} · ${niche}\n\nNote: Template-generated draft, not live AI. Replace generic points with accurate details and your own voice.`;
+ $('scriptOutput').textContent=script;data.drafts.unshift({text:script,topic,created:new Date().toISOString()});data.drafts=data.drafts.slice(0,20);try{localStorage.setItem('consist_v1',JSON.stringify(data))}catch(e){}
+}
+function randomTopic(){const a=['a day behind the scenes','3 mistakes beginners make','one thing I learned this week','my simple creative workflow','before and after a project','a tip I wish I knew earlier'];$('topic').value=a[Math.floor(Math.random()*a.length)];generateScript()}
+async function copyScript(){const t=$('scriptOutput').textContent;try{await navigator.clipboard.writeText(t);alert('Draft copied.')}catch(e){prompt('Copy your draft:',t)}}
+function saveDraft(){const title=$('topic').value.trim()||'New reel idea';data.posts.push({id:Date.now(),date:selectedDate,title,type:'Reel',published:false,script:$('scriptOutput').textContent});persist();showPage('calendar');alert('Draft saved to the selected calendar date: '+niceDate(selectedDate))}
+function addPost(){const title=$('postTitle').value.trim();if(!title){alert('Enter a post idea first.');return}data.posts.push({id:Date.now(),date:selectedDate,title,type:$('postType').value,published:false});$('postTitle').value='';persist()}
+function markSelectedPublished(){const post=data.posts.find(p=>p.date===selectedDate&&!p.published);if(post){post.published=true;addPublished(selectedDate);persist()}else{if(confirm('No pending post on this day. Mark the day as published anyway?')){addPublished(selectedDate);persist()}}}
+function addPublished(date){if(!data.published.includes(date))data.published.push(date);data.published.sort()}
+function publishToday(){addPublished(todayKey());persist();alert('Today marked as published. Keep going!')}
+function shiftMonth(n){monthDate=new Date(monthDate.getFullYear(),monthDate.getMonth()+n,1);renderCalendar()}
+function renderCalendar(){
+ const y=monthDate.getFullYear(),m=monthDate.getMonth(),first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),offset=(first.getDay()+6)%7;
+ $('monthLabel').textContent=monthDate.toLocaleDateString(undefined,{month:'long',year:'numeric'});$('calendarGrid').innerHTML='';
+ for(let i=0;i<offset;i++){const e=document.createElement('div');$('calendarGrid').appendChild(e)}
+ for(let d=1;d<=days;d++){const key=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,b=document.createElement('button');b.className='day'+(key===todayKey()?' today':'')+(data.posts.some(p=>p.date===key)?' has':'');b.innerHTML=`${d}${data.posts.some(p=>p.date===key)?'<div class="dot">●</div>':''}`;b.onclick=()=>{selectedDate=key;renderCalendar();$('selectedDateLabel').textContent=niceDate(key);};$('calendarGrid').appendChild(b)}
+ $('selectedDateLabel').textContent=niceDate(selectedDate);renderPosts();
+}
+function renderPosts(){const arr=data.posts.filter(p=>p.date===selectedDate);$('postList').innerHTML=arr.length?arr.map(p=>`<div class="post"><div class="row between"><b>${esc(p.title)}</b><span class="status ${p.published?'published':''}">${p.published?'Published':esc(p.type)}</span></div><div class="muted" style="font-size:12px;margin-top:5px">${niceDate(p.date)}</div><div class="actions" style="margin-top:8px">${!p.published?`<button class="btn small" onclick="publishPost(${p.id})">Mark published</button>`:''}<button class="btn secondary small" onclick="deletePost(${p.id})">Delete</button>${p.script?`<button class="btn secondary small" onclick="viewPostScript(${p.id})">View script</button>`:''}</div></div>`).join(''):'<div class="empty">No posts planned for this day yet.</div>'}
+function publishPost(id){const p=data.posts.find(p=>p.id===id);if(p){p.published=true;addPublished(p.date);persist()}}
+function deletePost(id){data.posts=data.posts.filter(p=>p.id!==id);persist()}
+function viewPostScript(id){const p=data.posts.find(p=>p.id===id);if(p&&p.script){$('scriptOutput').textContent=p.script;showPage('scripts')}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function streakNow(){let n=0,k=todayKey();if(!data.published.includes(k))k=shiftKey(k,-1);while(data.published.includes(k)&&n<500){n++;k=shiftKey(k,-1)}return n}
+function bestStreak(){let best=0,run=0,prev=null;for(const k of [...new Set(data.published)].sort()){run=prev&&shiftKey(prev,1)===k?run+1:1;best=Math.max(best,run);prev=k}return best}
+function renderStreaks(){const s=streakNow();$('streakMetric').textContent=s+' day'+(s===1?'':'s');$('streakBig').textContent=s+' day streak 🔥';$('totalPublished').textContent=new Set(data.published).size;$('bestStreak').textContent=bestStreak()+' days';const weekStart=shiftKey(todayKey(),-((new Date().getDay()+6)%7));let w=0;for(let i=0;i<7;i++)if(data.published.includes(shiftKey(weekStart,i)))w++;$('weekMetric').textContent=w+'/3';let h='';for(let i=13;i>=0;i--){const k=shiftKey(todayKey(),-i);h+=`<div class="row between" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>${niceDate(k)}</span><span>${data.published.includes(k)?'✅ Published':'○ Not marked'}</span></div>`}$('history').innerHTML=h}
+function renderHome(){const post=data.posts.find(p=>p.date===todayKey()&&!p.published);$('todayFocus').innerHTML=post?`<div class="row between"><div><b>${esc(post.title)}</b><div class="muted" style="font-size:12px">${esc(post.type)} · Today</div></div><button class="btn small" onclick="publishPost(${post.id})">Done</button></div>`:`<div><b>No urgent post scheduled today</b><p class="muted" style="margin:5px 0 12px">Make a small plan or publish something today to build your streak.</p><button class="btn secondary small" onclick="showPage('calendar')">Plan a post</button> <button class="btn secondary small" onclick="publishToday()">Mark published</button></div>`}
+function renderAll(){renderCalendar();renderStreaks();renderHome()}
+function clearVideo(){const v=$('videoPreview').querySelector('video');if(v){URL.revokeObjectURL(v.src);v.remove()}$('videoFile').value='';$('previewHint').classList.remove('hidden')}
+$('videoFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;clearVideo();const v=document.createElement('video');v.controls=true;v.playsInline=true;v.src=URL.createObjectURL(f);$('videoPreview').prepend(v);$('previewHint').classList.add('hidden')});
+$('overlayText').addEventListener('input',()=>{$('overlayLive').textContent=$('overlayText').value});
+$('overlaySize').addEventListener('input',()=>{$('overlayLive').style.fontSize=$('overlaySize').value+'px'});
+function downloadDraft(){const blob=new Blob([$('scriptOutput').textContent],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='consist-script.txt';a.click();URL.revokeObjectURL(a.href)}
+function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='consist-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function resetData(){if(confirm('Reset all saved posts and streaks? Export a backup first if needed.')){data={posts:[],published:[],drafts:[]};persist()}}
+renderAll();
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => console.log('Offline setup unavailable', err));
+  });
+}
+</script>
+</body></html>
