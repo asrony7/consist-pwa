@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111827">
+<title>Consist Video Editor</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1020;color:#f4f6ff;font:16px system-ui,sans-serif}
+main{max-width:720px;margin:auto;padding:18px}
+section{background:#151d31;border:1px solid #2a3651;border-radius:16px;padding:16px;margin:14px 0}
+p,small{color:#b7c2d9;line-height:1.5}
+input,select{width:100%;padding:12px;margin:5px 0 12px;border-radius:9px;background:#0d1425;color:white;border:1px solid #394663}
+button,a{display:inline-block;padding:13px 16px;border:0;border-radius:10px;background:#8b5cf6;color:white;font-weight:700;margin:5px 5px 5px 0;text-decoration:none}
+button:disabled{opacity:.5}
+video{width:100%;max-height:55vh;background:#000;border-radius:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.status{white-space:pre-wrap;overflow-wrap:anywhere;background:#0d1425;padding:12px;border-radius:9px}
+#bar{height:6px;background:#2a3651;border-radius:8px}
+#progress{height:6px;width:0;background:#a78bfa}
+@media(max-width:480px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>Consist Video Editor</h1>
+<p>Choose a video, trim it, optionally add text, and export an MP4 in your browser. Keep this page open while exporting.</p>
+<section>
+<h2>1. Select video</h2>
+<input id="file" type="file" accept="video/*">
+<video id="preview" controls playsinline></video>
+<p id="info">For your first test, choose a 5–15 second video.</p>
+</section>
+<section>
+<h2>2. Trim</h2>
+<div class="grid">
+<label>Start (seconds)<input id="start" type="number" min="0" step=".1" value="0"></label>
+<label>End (seconds)<input id="end" type="number" min=".1" step=".1" value="10"></label>
+</div>
+</section>
+<section>
+<h2>3. Text overlay (optional)</h2>
+<label>Text to burn into video<input id="overlay" type="text" maxlength="120" placeholder="Your text here"></label>
+<div class="grid">
+<label>Font size<input id="size" type="number" min="18" max="96" value="42"></label>
+<label>Position<select id="position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="center">Center</option></select></label>
+</div>
+<small>Text is burned into the exported video. If text export fails, clear the text box and retry.</small>
+</section>
+<section>
+<h2>4. Export MP4</h2>
+<p>The first load downloads the FFmpeg engine (about 30 MB) and helper files. Use Wi-Fi if possible. Processing happens on your device.</p>
+<button id="load">Load video engine</button>
+<button id="export" disabled>Export MP4</button>
+<div id="bar"><div id="progress"></div></div>
+<p id="status" class="status">Choose a video to begin.</p>
+<div id="resultWrap" hidden><video id="result" controls playsinline></video><a id="download" download="consist-edited.mp4">Download MP4</a></div>
+</section>
+<section>
+<h3>Mobile limits</h3>
+<p>Large/high-resolution videos may run out of memory or render slowly. Try a short 720p clip first. This starter supports trimming and optional text, not transitions, multiple clips, or music mixing.</p>
+</section>
+</main>
+
+<!-- The FFmpeg wrapper is loaded separately. Its worker file is fetched and converted
+     to a Blob URL so the browser can start it from this page without a cross-origin worker URL. -->
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.js"></script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+let ffmpeg=null,loaded=false,file=null,videoURL=null,resultURL=null,fontBytes=null,workerURL=null;
+const say=s=>{$('status').textContent=s};
+const safe=s=>(s||'input-video').replace(/[^\w.-]+/g,'_').slice(0,80);
+const toBlobURL=async(url,type)=>{
+  const response=await fetch(url);
+  if(!response.ok) throw Error('Could not download helper file ('+response.status+'): '+url);
+  return URL.createObjectURL(new Blob([await response.arrayBuffer()],{type}));
+};
+const fetchFile=async(f)=>new Uint8Array(await f.arrayBuffer());
+
+$('file').onchange=e=>{
+  file=e.target.files&&e.target.files[0]; if(!file)return;
+  if(videoURL)URL.revokeObjectURL(videoURL);
+  videoURL=URL.createObjectURL(file);
+  $('preview').src=videoURL;
+  $('preview').onloadedmetadata=()=>{
+    const d=$('preview').duration;
+    $('info').textContent=`Duration: ${d.toFixed(1)} sec • ${(file.size/1048576).toFixed(1)} MB`;
+    $('start').value=0; $('end').value=Math.floor(d*10)/10;
+  };
+  $('export').disabled=!loaded;
+  say('Video selected. Load the engine, then export.');
+};
+
+$('load').onclick=async()=>{
+  if(!file){say('Choose a video first.');return}
+  if(loaded){say('Engine already loaded.');return}
+  $('load').disabled=true;
+  try{
+    if(!window.FFmpegWASM || !window.FFmpegWASM.FFmpeg){
+      throw Error('FFmpeg wrapper did not load. Check internet/CDN access and refresh.');
+    }
+    say('Downloading FFmpeg worker helper…');
+    workerURL=await toBlobURL('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/814.ffmpeg.js','text/javascript');
+    say('Starting FFmpeg engine (~30 MB)…');
+    ffmpeg=new window.FFmpegWASM.FFmpeg();
+    ffmpeg.on('progress',e=>{
+      if(typeof e.progress==='number') $('progress').style.width=Math.max(0,Math.min(100,e.progress*100))+'%';
+    });
+    const base='https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd';
+    await ffmpeg.load({
+      classWorkerURL:workerURL,
+      coreURL:await toBlobURL(base+'/ffmpeg-core.js','text/javascript'),
+      wasmURL:await toBlobURL(base+'/ffmpeg-core.wasm','application/wasm')
+    });
+    say('Engine loaded. Ready to export.');
+    loaded=true;
+    $('export').disabled=false;
+    $('load').textContent='Engine loaded';
+  }catch(e){
+    say('Engine load failed: '+(e&&e.message?e.message:String(e))+'\nTry stable Wi-Fi and reload. If it persists, the browser/CDN may be blocking a helper file.');
+    $('load').disabled=false;
+  }
+};
+
+$('export').onclick=async()=>{
+  if(!loaded||!file)return;
+  const start=Number($('start').value),end=Number($('end').value),dur=$('preview').duration,text=$('overlay').value.trim();
+  if(!Number.isFinite(start)||!Number.isFinite(end)||start<0||end<=start||end>dur+.1){
+    say('Invalid trim values. End must be after start and within video duration.');return;
+  }
+  $('export').disabled=true;$('load').disabled=true;$('progress').style.width='0%';
+  const name=safe(file.name).replace(/\.[^.]+$/,'')+'.input';
+  try{
+    say('Preparing video file…');
+    await ffmpeg.writeFile(name,await fetchFile(file));
+    const args=['-ss',String(start),'-i',name,'-t',String(end-start)];
+    if(text){
+      say('Downloading font for text overlay…');
+      const fontResponse=await fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/roboto/Roboto%5Bwdth%2Cwght%5D.ttf');
+      if(!fontResponse.ok)throw Error('Font download failed. Clear the text field and retry export.');
+      fontBytes=new Uint8Array(await fontResponse.arrayBuffer());
+      await ffmpeg.writeFile('consist-font.ttf',fontBytes);
+      await ffmpeg.writeFile('consist-text.txt',new TextEncoder().encode(text.replace(/[\r\n]/g,' ')));
+      let y='h-text_h-50';
+      if($('position').value==='top')y='50';
+      if($('position').value==='center')y='(h-text_h)/2';
+      const size=Math.max(18,Math.min(96,Number($('size').value)||42));
+      args.push('-vf',`drawtext=fontfile=/consist-font.ttf:textfile=/consist-text.txt:fontcolor=white:fontsize=${size}:x=(w-text_w)/2:y=${y}:box=1:boxcolor=black@0.55:boxborderw=16`);
+    }
+    args.push('-map','0:v:0','-map','0:a?','-c:v','libx264','-preset','ultrafast','-crf','23','-c:a','aac','-b:a','128k','-movflags','+faststart','-pix_fmt','yuv420p','output.mp4');
+    say('Rendering MP4… keep Chrome open. This may take a while.');
+    const code=await ffmpeg.exec(args);
+    if(code!==0)throw Error('Render failed. Try a shorter clip or export without text.');
+    const data=await ffmpeg.readFile('output.mp4');
+    const blob=new Blob([data],{type:'video/mp4'});
+    if(resultURL)URL.revokeObjectURL(resultURL);
+    resultURL=URL.createObjectURL(blob);
+    $('result').src=resultURL;$('download').href=resultURL;$('resultWrap').hidden=false;
+    $('download').download='consist-edited.mp4';
+    $('progress').style.width='100%';
+    say('MP4 ready ('+(blob.size/1048576).toFixed(1)+' MB). Tap Download MP4.');
+  }catch(e){
+    say('Export failed: '+(e&&e.message?e.message:String(e))+'\nTry a 5–15 second video. If text overlay fails, clear the text field and retry.');
+  }finally{
+    $('export').disabled=false;$('load').disabled=false;
+  }
+};
+})();
+</script>
+</body>
+</html>
